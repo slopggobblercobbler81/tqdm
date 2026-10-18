@@ -350,3 +350,55 @@ def test_iter_manual_miniters_below_mininterval_branch():
         for _ in pbar:
             clock.advance(0.01)
         assert pbar.miniters == 2
+
+
+def test_infinite_and_astronomical_mininterval():
+    """Verify infinite and astronomical mininterval values avoid OverflowError."""
+    # 1. __iter__ with mininterval=float('inf') using MockDiscreteTimer (dt > 0)
+    clock = MockDiscreteTimer(start=100.0)
+    s = io.StringIO()
+    with tqdm(range(10), file=s, mininterval=float('inf')) as pbar:
+        pbar._time = clock
+        pbar.start_t = pbar.last_print_t = clock.current
+        for _ in pbar:
+            clock.advance(0.01)
+        assert pbar.n == 10
+
+    # 2. __iter__ with mininterval=float('inf') standard run
+    s2 = io.StringIO()
+    with tqdm(range(10), file=s2, mininterval=float('inf')) as pbar2:
+        items = list(pbar2)
+        assert items == list(range(10))
+        assert pbar2.n == 10
+
+    # 3. manual update() with mininterval=float('inf')
+    clock3 = MockDiscreteTimer(start=100.0)
+    s3 = io.StringIO()
+    with tqdm(total=10, file=s3, mininterval=float('inf')) as pbar3:
+        pbar3._time = clock3
+        pbar3.start_t = pbar3.last_print_t = clock3.current
+        for _ in range(10):
+            clock3.advance(0.01)
+            pbar3.update(1)
+        assert pbar3.n == 10
+
+    # 4. manual update() with astronomical mininterval=1e308
+    clock4 = MockDiscreteTimer(start=100.0)
+    s4 = io.StringIO()
+    with tqdm(total=10, file=s4, mininterval=1e308) as pbar4:
+        pbar4._time = clock4
+        pbar4.start_t = pbar4.last_print_t = clock4.current
+        for _ in range(10):
+            clock4.advance(0.01)
+            pbar4.update(1)
+        assert pbar4.n == 10
+
+    # 5. __iter__ with astronomical mininterval=1e308
+    clock5 = MockDiscreteTimer(start=100.0)
+    s5 = io.StringIO()
+    with tqdm(range(10), file=s5, mininterval=1e308) as pbar5:
+        pbar5._time = clock5
+        pbar5.start_t = pbar5.last_print_t = clock5.current
+        for _ in pbar5:
+            clock5.advance(0.01)
+        assert pbar5.n == 10

@@ -1275,9 +1275,12 @@ class tqdm(Comparable):
                         last_print_t = self.last_print_t
                     elif self.dynamic_miniters and dt < mininterval:
                         if dt > 0:
-                            self.miniters = max(
-                                self.miniters * 2,
-                                int((n - last_print_n) * (mininterval / dt) * 0.9), 1)
+                            try:
+                                self.miniters = max(
+                                    self.miniters * 2,
+                                    int((n - last_print_n) * (mininterval / dt) * 0.9), 1)
+                            except (OverflowError, ValueError):
+                                self.miniters = max(self.miniters * 2, 1)
                         else:
                             self.miniters += 1
         finally:
@@ -1351,9 +1354,12 @@ class tqdm(Comparable):
                 return True
             elif self.dynamic_miniters and dt < self.mininterval:
                 if dt > 0:
-                    self.miniters = max(
-                        self.miniters * 2,
-                        int((self.n - self.last_print_n) * (self.mininterval / dt) * 0.9), 1)
+                    try:
+                        self.miniters = max(
+                            self.miniters * 2,
+                            int((self.n - self.last_print_n) * (self.mininterval / dt) * 0.9), 1)
+                    except (OverflowError, ValueError):
+                        self.miniters = max(self.miniters * 2, 1)
                 else:
                     self.miniters += 1
 
