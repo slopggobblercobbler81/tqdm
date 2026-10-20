@@ -19,6 +19,8 @@ import pytest
 from tqdm import tqdm, trange
 from tqdm.asyncio import tqdm_asyncio
 
+pytestmark = pytest.mark.slow
+
 # Detection for M2 BatchBuffer feature
 try:
     from tqdm import BatchBuffer
@@ -1321,7 +1323,7 @@ def test_t3_thread_pool_with_ema_smoothing():
         with ThreadPoolExecutor(max_workers=3) as pool:
             futures = [pool.submit(update_task) for _ in range(50)]
             for f in futures:
-                f.result()
+                f.result(timeout=5.0)
     assert pbar.n == 50
 
 
