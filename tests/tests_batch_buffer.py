@@ -14,6 +14,7 @@ Tests all code paths, branches, and edge cases for `BatchBuffer` and `tqdm.buffe
 
 import io
 import threading
+
 import pytest
 from pytest import raises
 

@@ -9,13 +9,14 @@ This suite provides opaque-box verification across:
 """
 
 import asyncio
-from concurrent.futures import ThreadPoolExecutor
 import io
 import queue
 import threading
 import time
+from concurrent.futures import ThreadPoolExecutor
 
 import pytest
+
 from tqdm import tqdm, trange
 from tqdm.asyncio import tqdm_asyncio
 
