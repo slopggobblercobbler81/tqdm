@@ -1451,7 +1451,7 @@ def test_t4_pipeline_etl_nested_bars():
                 total=batches_per_epoch, file=inner_stream,
                 desc=f"Ep {epoch}", position=1, leave=False
             ) as p_inner:
-                for batch in range(batches_per_epoch):
+                for _batch in range(batches_per_epoch):
                     total_processed += 1
                     p_inner.update(1)
             p_outer.update(1)
